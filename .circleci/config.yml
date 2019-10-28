@@ -1,8 +1,28 @@
 version: 2.1
 jobs:
-  build:
+  go-build:
+    working_directory: ~/repo
+
     docker:
-      - image: circleci/node:4.8.2
+      - image: circleci/golang:1.12.5-stretch
+
     steps:
       - checkout
-      - run: echo "hello world"
+      - run:
+          name: update
+          command: sudo apt update
+      - run:
+          name: run unit test
+          command: go test ~/repo/...
+      - run:
+          name: build go
+          command: go build -o test-go main.go
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - test-go
+workflows:
+  version: 2
+  run_all:
+    jobs:
+      - go-build

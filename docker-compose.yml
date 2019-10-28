@@ -1,0 +1,13 @@
+version: "3.6"
+services:
+  locust:
+    build:
+      context: ../ride-locust/infrastructure/docker/ride_locust/
+      dockerfile: Dockerfile
+    container_name: "ride_locust"
+    volumes:
+      - $PWD:/go/src/ride-locust
+    tty: true
+    expose:
+      - 80
+    privileged: true
