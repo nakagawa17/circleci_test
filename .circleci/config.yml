@@ -1,28 +1,23 @@
 version: 2.1
 jobs:
-  go-build:
+  sshconfirm:
     working_directory: ~/repo
 
     docker:
-      - image: circleci/golang:1.12.5-stretch
+      - image: circleci/python:3.6-jessie-node-browsers
 
     steps:
-      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - 9a:3e:43:63:96:74:90:7b:86:c9:2f:f1:13:8a:f4:2f
       - run:
-          name: update
-          command: sudo apt update
+          name: ls
+          command: ls -la ~
       - run:
-          name: run unit test
-          command: go test ~/repo/...
-      - run:
-          name: build go
-          command: go build -o test-go main.go
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - test-go
+          name: ls 2
+          command: ls -la ~/repo
 workflows:
   version: 2
   run_all:
     jobs:
-      - go-build
+      - sshconfirm
