@@ -15,6 +15,9 @@ jobs:
           name: ls
           command: ls -la ~
       - run:
+          name: ls project
+          command: ls -la ~/project
+      - run:
           name: Deploy with Ansible
           command: cd ~/ansible && ansible-playbook -i locust.ini site.yml
 #      - run:
