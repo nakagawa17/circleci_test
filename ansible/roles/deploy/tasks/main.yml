@@ -1,0 +1,6 @@
+- name: deploy locust
+  synchronize:
+    src: ~/hoge.txt
+    dest: /home/ec2-user
+    compress: no
+    use_ssh_args: yes

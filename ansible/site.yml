@@ -1,0 +1,4 @@
+- name: deploy locust dev server
+  hosts: development
+  roles:
+    - deploy
