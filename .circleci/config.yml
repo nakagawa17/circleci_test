@@ -6,6 +6,12 @@ jobs:
       - image: circleci/python:3.6-jessie-node-browsers
 
     steps:
+      - run:
+          name: Install rsync
+          command: sudo apt install -y rsync
+      - run:
+          name: Install Ansible
+          command: sudo pip install ansible
       - checkout
       - add_ssh_keys:
           fingerprints:
