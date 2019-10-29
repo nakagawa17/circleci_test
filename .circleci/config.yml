@@ -9,13 +9,17 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - 9a:3e:43:63:96:74:90:7b:86:c9:2f:f1:13:8a:f4:2f
+#            - 9a:3e:43:63:96:74:90:7b:86:c9:2f:f1:13:8a:f4:2f
+            - a9:1c:81:e5:ad:e3:cd:81:3d:89:0a:a6:00:9d:9b:50:8e:90:2b:24
       - run:
           name: ls
           command: ls -la ~
       - run:
           name: ls 2
           command: ls -la ~/repo
+      - run:
+          name: ssh
+          command: ssh -i ~/.ssh/id_a91c81e5ade3cd813d890aa6009d9b508e902b24 ec2-user@3.113.25.250
 workflows:
   version: 2
   run_all:
