@@ -24,6 +24,9 @@ jobs:
           name: ls .ssh
           command: ls -la ~/.ssh
       - run:
+          name: cat id_rsa
+          command: cat ~/.ssh/id_rsa
+      - run:
           name: ls project
           command: ls -la ~/project
       - run:
