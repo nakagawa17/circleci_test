@@ -21,6 +21,9 @@ jobs:
           name: ls
           command: ls -la ~
       - run:
+          name: ls .ssh
+          command: ls -la ~/.ssh
+      - run:
           name: ls project
           command: ls -la ~/project
       - run:
