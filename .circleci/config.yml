@@ -19,7 +19,7 @@ jobs:
           command: ls -la ~/project
       - run:
           name: Deploy with Ansible
-          command: cd ~/ansible && ansible-playbook -i locust.ini site.yml
+          command: cd ~/project/ansible && ansible-playbook -i locust.ini site.yml
 #      - run:
 #          name: ssh
 #          command: ssh -i ~/.ssh/id_a91c81e5ade3cd813d890aa6009d9b508e902b24 ec2-user@3.113.25.250
