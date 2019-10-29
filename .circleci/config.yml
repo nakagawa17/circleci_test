@@ -15,8 +15,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-#            - 9a:3e:43:63:96:74:90:7b:86:c9:2f:f1:13:8a:f4:2f
-            - "a9:1c:81:e5:ad:e3:cd:81:3d:89:0a:a6:00:9d:9b:50:8e:90:2b:24"
+            - "42:f2:8d:b3:01:8c:e0:6b:05:93:91:d9:91:be:d3:b1"
       - run:
           name: ls
           command: ls -la ~
