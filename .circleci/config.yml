@@ -35,7 +35,7 @@ jobs:
       - run:
           name: jdk
           command: ls && echo $PWD && $PWD/jdk-9.0.4+11/bin
-       run:
+      - run:
           name: set PATH
           command: echo 'export PATH=$PWD/jdk-9.0.4+11/bin:$PATH' >> $BASH_ENV
       - run:
