@@ -49,10 +49,10 @@ jobs:
           command: java -version
       - run:
           name: pre install mock server
-          command: wget -P ~ http://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.17.0/wiremock-standalone-2.17.0.jar
+          command: wget http://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.17.0/wiremock-standalone-2.17.0.jar
       - run:
           name: exe jar
-          command: java -jar ~/wiremock-standalone-2.12.0.jar
+          command: ls && java -jar wiremock-standalone-2.17.0.jar
       - run:
           name: ls
           command: ls -la ~
