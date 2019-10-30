@@ -57,6 +57,9 @@ jobs:
           name: confirm service
           command: which service
       - run:
+          name: start docker
+          command: systemctl start docker
+      - run:
           name: pre install mock server
           command: wget http://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.17.0/wiremock-standalone-2.17.0.jar
       - run:
