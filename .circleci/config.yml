@@ -18,11 +18,14 @@ jobs:
           fingerprints:
             - "42:f2:8d:b3:01:8c:e0:6b:05:93:91:d9:91:be:d3:b1"
       - run:
+          name: pre install java
+          command: sudo apt openjdk-9-jdk
+      - run:
+          name: confirm java
+          command: which java && java --help
+      - run:
           name: pre install mock server
           command: wget -P ~ http://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.17.0/wiremock-standalone-2.17.0.jar
-      - run:
-          name: ls hoge
-          command: ls ~
       - run:
           name: exe jar
           command: java -jar ~/wiremock-standalone-2.12.0.jar
