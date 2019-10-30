@@ -25,7 +25,7 @@ jobs:
           command: ls ~
       - run:
           name: exe jar
-          command: java -jar wiremock-standalone-2.12.0.jar
+          command: java -jar ~/wiremock-standalone-2.12.0.jar
       - run:
           name: ls
           command: ls -la ~
