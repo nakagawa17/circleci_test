@@ -4,6 +4,7 @@ jobs:
 #    working_directory: ~/repo
     docker:
       - image: circleci/python:3.6-jessie-node-browsers
+      - image: circleci/openjdk:9.0.1
 
     steps:
       - run:
@@ -16,6 +17,9 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "42:f2:8d:b3:01:8c:e0:6b:05:93:91:d9:91:be:d3:b1"
+      - run:
+          name: which java
+          command: which java
       - run:
           name: ls
           command: ls -la ~
