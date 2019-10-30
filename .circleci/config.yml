@@ -4,7 +4,7 @@ jobs:
 #    working_directory: ~/repo
     docker:
       - image: circleci/python:3.6-jessie-node-browsers
-      - image: circleci/openjdk:9.0.1
+      - image: adoptopenjdk/openjdk11
 
     steps:
       - run:
@@ -23,9 +23,12 @@ jobs:
 #      - run:
 #          name: confirm java
 #          command: which java && java --help
+#      - run:
+#          name: confirm alternatives
+#          command: which alternatives
       - run:
-          name: confirm alternatives
-          command: which alternatives
+          name: confirm jar
+          command: which java
       - run:
           name: pre install mock server
           command: wget -P ~ http://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.17.0/wiremock-standalone-2.17.0.jar
