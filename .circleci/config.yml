@@ -34,7 +34,10 @@ jobs:
           command: tar xvzf OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz
       - run:
           name: jdk
-          command: ls && echo $PWD && export PATH=$PWD/jdk-9.0.4+11/bin:$PATH
+          command: ls && echo $PWD && $PWD/jdk-9.0.4+11/bin
+       run:
+          name: set PATH
+          command: export PATH=$PWD/jdk-9.0.4+11/bin:$PATH
       - run:
           name: confirm PATH
           command: echo $PATH
