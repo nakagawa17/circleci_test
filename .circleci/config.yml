@@ -18,8 +18,8 @@ jobs:
           fingerprints:
             - "42:f2:8d:b3:01:8c:e0:6b:05:93:91:d9:91:be:d3:b1"
       - run:
-          name: which java
-          command: which java
+          name: confirm java
+          command: java --help
       - run:
           name: ls
           command: ls -la ~
