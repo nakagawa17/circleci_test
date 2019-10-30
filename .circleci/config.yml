@@ -31,7 +31,10 @@ jobs:
           command: wget -P ~ https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz
       - run:
           name: tar
-          command: tar -xf ~/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz && mv ~/jdk-9.0.4+11 /opt && export PATH=/opt/jdk-9.0.4+11/bin:$PATH
+          command: tar -xf ~/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz
+      - run:
+          name: jdk
+          command: ls ~ && mv ~/jdk-9.0.4+11 /opt && export PATH=/opt/jdk-9.0.4+11/bin:$PATH
       - run:
           name: confirm java
           command: which java && ls /opt
