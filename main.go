@@ -41,4 +41,5 @@ func main() {
 		&Dog{name:"taro"},
 	}
 	GetOnlyDog(boxes)
+	fmt.Println("OK!")
 }

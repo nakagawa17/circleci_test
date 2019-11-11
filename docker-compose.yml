@@ -1,12 +1,13 @@
 version: "3.6"
 services:
   locust:
-    build:
-      context: ../ride-locust/infrastructure/docker/ride_locust/
-      dockerfile: Dockerfile
-    container_name: "ride_locust"
+#    build:
+#      context: ../ride-locust/infrastructure/docker/ride_locust/
+#      dockerfile: Dockerfile
+    image: 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app
+    container_name: "test-app"
     volumes:
-      - $PWD:/go/src/ride-locust
+      - $PWD:/go/src/test-app
     tty: true
     expose:
       - 80

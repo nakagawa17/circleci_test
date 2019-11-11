@@ -1,90 +1,123 @@
-version: 2.1
+version: 2
 jobs:
-  sshconfirm:
-#    working_directory: ~/repo
+  # go build ~ test
+  go-build:
+    working_directory: ~/repo
+
+    docker:
+      - image: circleci/golang:1.12.5-stretch
+    steps:
+      - checkout
+      - run:
+          name: update
+          command: sudo apt update
+      - run:
+          name: cp env
+          command: cp ~/repo/env/circleci.env ~/repo/.env
+      - run:
+          name: run unit test
+          command: ENV_FILE=env/circleci.env go test $(go list ~/repo/... | grep -v "sample")
+      - run:
+          name: build go
+          command: go build -o locust main.go
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - locust
+  # ruby e2eテスト
+  ruby-e2e:
+    working_directory: ~/repo
+
+    docker:
+      - image: circleci/ruby:latest
+      - image: rodolpheche/wiremock
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: update
+          command: sudo apt update
+      - run:
+          name: cp env
+          command: cp ~/repo/env/circleci.env ~/repo/.env
+      - run:
+          name: install bundler
+          command: gem install bundler
+      - run:
+          name: bundle install
+          command: cd ~/repo/test && bundle install --path vendor/bundle
+      - run:
+          name: run e2e test
+          command: cd ~/repo/test && ENV_FILE=~/repo/.env bundle exec rspec
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - infrastructure/
+            - locust
+            - env
+  deploy:
+    working_directory: ~/repo
     docker:
       - image: circleci/python:3.6-jessie-node-browsers
-      - image: adoptopenjdk/openjdk11
-
     steps:
-#      - run:
-#          name: Install rsync
-#          command: sudo apt install -y rsync
-#      - run:
-#          name: Install Ansible
-#          command: sudo pip install ansible
-      - checkout
+      - attach_workspace:
+          at: ~/repo
+
+      - setup_remote_docker
+
+      - run:
+          name: Set environment variables
+          command: |
+            echo "export AWS_ACCESS_KEY_ID=${STAGING_AWS_ACCESS_KEY_ID}" >> $BASH_ENV
+            echo "export AWS_SECRET_ACCESS_KEY=${STAGING_AWS_SECRET_ACCESS_KEY}" >> $BASH_ENV
+      - run:
+          name: docker build
+          command: |
+            $(aws ecr get-login --no-include-email --region ap-northeast-1)
+            docker build -t test-app .
+            docker tag test-app:latest 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1 .
+            docker push 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
+
+      - run:
+          name: ecs deploy
+          command: ecs-deploy -n test-service -c test -t 240 -i 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
+          no_output_timeout: 20m
+
+      - run:
+          name: Install rsync
+          command: sudo apt install -y rsync
+      - run:
+          name: Install Ansible
+          command: sudo pip install ansible
       - add_ssh_keys:
           fingerprints:
             - "42:f2:8d:b3:01:8c:e0:6b:05:93:91:d9:91:be:d3:b1"
-#      - run:
-#          name: pre install java
-#          command: sudo apt install openjdk-9-jdk
-#      - run:
-#          name: confirm java
-#          command: which java && java --help
-#      - run:
-#          name: confirm alternatives
-#          command: which alternatives
+            # ssh_key name is id_rsa_[finger_print_name] you can see finger_print_name in circle ci web page
       - run:
-          name: get jdk
-          command: wget https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz
-      - run:
-          name: tar
-          command: tar xvzf OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz
-      - run:
-          name: jdk
-          command: ls && echo $PWD && ls $PWD/jdk-9.0.4+11/bin
-      - run:
-          name: set PATH
-          command: echo 'export PATH=$PWD/jdk-9.0.4+11/bin:$PATH' >> $BASH_ENV
-      - run:
-          name: confirm PATH
-          command: echo $PATH
-      - run:
-          name: confirm java
-          command: which java
-      - run:
-          name: confirm java 2
-          command: java -version
-      - run:
-          name: confirm docker
-          command: which docker
-      - run:
-          name: confirm systemctl
-          command: which systemctl
-      - run:
-          name: confirm service
-          command: which service
-      - run:
-          name: start docker
-          command: service docker start
-      - run:
-          name: pre install mock server
-          command: wget http://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.17.0/wiremock-standalone-2.17.0.jar
-      - run:
-          name: exe jar
-          command: ls && java -jar wiremock-standalone-2.17.0.jar
-      - run:
-          name: ls
-          command: ls -la ~
-      - run:
-          name: ls .ssh
-          command: ls -la ~/.ssh
-      - run:
-          name: cat id_rsa
-          command: cat ~/.ssh/id_rsa
-      - run:
-          name: ls project
-          command: ls -la ~/project
+          name: Start ssh-agent for registering ssh-key
+          command: |
+            ssh-agent -s > ~/.ssh_agent_conf
+            source ~/.ssh_agent_conf
+            for _k in $(ls ${HOME}/.ssh/id_*); do
+              ssh-add ${_k} || true
+            done
       - run:
           name: Deploy with Ansible
-          command: cd ~/project/ansible && ansible-playbook -i locust.ini site.yml
-#      - run:
-#          name: ssh
-#          command: ssh -i ~/.ssh/id_a91c81e5ade3cd813d890aa6009d9b508e902b24 ec2-user@3.113.25.250
+          command: cd ~/repo/infrastructure/ansible && ansible-playbook -i locust.ini site.yml
+
 workflows:
   version: 2
   run_all:
     jobs:
-      - sshconfirm
+      - go-build
+      - ruby-e2e:
+          requires:
+            - go-build
+      - deploy:
+          requires:
+            - go-build
+            - ruby-e2e
+          filters:
+            branches:
+              only: develop
