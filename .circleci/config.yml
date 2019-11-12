@@ -74,7 +74,7 @@ jobs:
       - run:
           name: confirm python
           command: which python
-     - run:
+      - run:
           name: confirm pip
           command: which pip3
       - run:
