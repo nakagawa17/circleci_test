@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  # go build ~ test
+  # go test
   go-build:
     working_directory: ~/repo
 
@@ -17,13 +17,13 @@ jobs:
       - run:
           name: run unit test
           command: ENV_FILE=env/circleci.env go test $(go list ~/repo/... | grep -v "sample")
-      - run:
-          name: build go
-          command: go build -o locust main.go
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - locust
+#      - run:
+#          name: build go
+#          command: go build -o locust main.go
+#      - persist_to_workspace:
+#          root: ~/repo
+#          paths:
+#            - locust
   # ruby e2eテスト
   ruby-e2e:
     working_directory: ~/repo
@@ -33,8 +33,8 @@ jobs:
       - image: rodolpheche/wiremock
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/repo
+#      - attach_workspace:
+#          at: ~/repo
       - run:
           name: update
           command: sudo apt update
@@ -50,53 +50,33 @@ jobs:
       - run:
           name: run e2e test
           command: cd ~/repo/test && ENV_FILE=~/repo/.env bundle exec rspec
-      - run:
-          name: ls ~(debug)
-          command: ls ~
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - infrastructure/
-            - locust
-            - env
+#      - persist_to_workspace:
+#          root: ~/repo
+#          paths:
+#            - infrastructure/
+#            - locust
+#            - env
   deploy:
     working_directory: ~/repo
     docker:
       - image: circleci/python:3.6-jessie-node-browsers
     steps:
-      - attach_workspace:
-          at: ~/repo
+#      - attach_workspace:
+#          at: ~/repo
 
       - checkout
 
       - setup_remote_docker
 
       - run:
+          name: install aws
+          command: pip3 install awscli --upgrade --user
+      - run:
           name: Set environment variables
           command: |
             echo "export AWS_ACCESS_KEY_ID=${STAGING_AWS_ACCESS_KEY_ID}" >> $BASH_ENV
             echo "export AWS_SECRET_ACCESS_KEY=${STAGING_AWS_SECRET_ACCESS_KEY}" >> $BASH_ENV
-      - run:
-          name: confirm python
-          command: which python
-      - run:
-          name: confirm pip
-          command: which pip3
-      - run:
-          name: install aws
-          command: pip3 install awscli --upgrade --user
-      - run:
-          name: bash set
-          command: echo "export PATH=~/.local/bin:$PATH" >> $BASH_ENV
-      - run:
-          name: confirm aws(debug)
-          command: which aws
-      - run:
-          name: ls ~(debug)
-          command: ls ~
-      - run:
-          name: ls ~(debug)2
-          command: ls ~/repo/
+            echo "export PATH=~/.local/bin:$PATH" >> $BASH_ENV
       - run:
           name: docker build
           command: |
@@ -109,42 +89,19 @@ jobs:
 #          name: ecs deploy
 #          command: ecs-deploy -n test-service -c test -t 240 -i 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
 #          no_output_timeout: 20m
-#
-#      - run:
-#          name: Install rsync
-#          command: sudo apt install -y rsync
-#      - run:
-#          name: Install Ansible
-#          command: sudo pip install ansible
-#      - add_ssh_keys:
-#          fingerprints:
-#            - "42:f2:8d:b3:01:8c:e0:6b:05:93:91:d9:91:be:d3:b1"
-#            # ssh_key name is id_rsa_[finger_print_name] you can see finger_print_name in circle ci web page
-#      - run:
-#          name: Start ssh-agent for registering ssh-key
-#          command: |
-#            ssh-agent -s > ~/.ssh_agent_conf
-#            source ~/.ssh_agent_conf
-#            for _k in $(ls ${HOME}/.ssh/id_*); do
-#              ssh-add ${_k} || true
-#            done
-#      - run:
-#          name: Deploy with Ansible
-#          command: cd ~/repo/infrastructure/ansible && ansible-playbook -i locust.ini site.yml
-
 workflows:
   version: 2
   run_all:
     jobs:
-#      - go-build
-#      - ruby-e2e:
-#          requires:
-#            - go-build
-#      - deploy:
-      - deploy
-#          requires:
-#            - go-build
-#            - ruby-e2e
+      - go-build
+      - ruby-e2e:
+          requires:
+            - go-build
+      - deploy:
+#      - deploy
+          requires:
+            - go-build
+            - ruby-e2e
 #          filters:
 #            branches:
 #              only: develop
