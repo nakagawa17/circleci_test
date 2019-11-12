@@ -81,8 +81,11 @@ jobs:
           name: install aws
           command: pip3 install awscli --upgrade --user
       - run:
+          name: bash set
+          command: echo "export PATH=~/.local/bin:$PATH" >> $BASH_ENV
+      - run:
           name: confirm aws
-          command: ls /usr/bin
+          command: which aws
       - run:
           name: docker build
           command: |
