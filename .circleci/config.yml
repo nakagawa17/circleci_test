@@ -1,7 +1,7 @@
 version: 2
 jobs:
   # go test
-  go-build:
+  go-test:
     working_directory: ~/repo
 
     docker:
@@ -17,13 +17,13 @@ jobs:
       - run:
           name: run unit test
           command: ENV_FILE=env/circleci.env go test $(go list ~/repo/... | grep -v "sample")
-#      - run:
-#          name: build go
-#          command: go build -o locust main.go
-#      - persist_to_workspace:
-#          root: ~/repo
-#          paths:
-#            - locust
+  #      - run:
+  #          name: build go
+  #          command: go build -o locust main.go
+  #      - persist_to_workspace:
+  #          root: ~/repo
+  #          paths:
+  #            - locust
   # ruby e2eテスト
   ruby-e2e:
     working_directory: ~/repo
@@ -33,8 +33,8 @@ jobs:
       - image: rodolpheche/wiremock
     steps:
       - checkout
-#      - attach_workspace:
-#          at: ~/repo
+      #      - attach_workspace:
+      #          at: ~/repo
       - run:
           name: update
           command: sudo apt update
@@ -50,19 +50,19 @@ jobs:
       - run:
           name: run e2e test
           command: cd ~/repo/test && ENV_FILE=~/repo/.env bundle exec rspec
-#      - persist_to_workspace:
-#          root: ~/repo
-#          paths:
-#            - infrastructure/
-#            - locust
-#            - env
+  #      - persist_to_workspace:
+  #          root: ~/repo
+  #          paths:
+  #            - infrastructure/
+  #            - locust
+  #            - env
   deploy:
     working_directory: ~/repo
     docker:
       - image: circleci/python:3.6-jessie-node-browsers
     steps:
-#      - attach_workspace:
-#          at: ~/repo
+      #      - attach_workspace:
+      #          at: ~/repo
 
       - checkout
 
@@ -82,8 +82,8 @@ jobs:
           command: |
             cd ~/repo
             $(aws ecr get-login --no-include-email --region ap-northeast-1)
-            docker build -t test-app .
-            docker tag test-app:latest 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
+            docker build -t ride-locust .
+            docker tag ride-locust:latest 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
             docker push 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
 #      - run:
 #          name: ecs deploy
@@ -93,14 +93,14 @@ workflows:
   version: 2
   run_all:
     jobs:
-      - go-build
+      - go-test
       - ruby-e2e:
           requires:
-            - go-build
+            - go-test
       - deploy:
-#      - deploy
+          #      - deploy
           requires:
-            - go-build
+            - go-test
             - ruby-e2e
 #          filters:
 #            branches:
