@@ -68,6 +68,8 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
+      - checkout
+
       - setup_remote_docker
 
       - run:
@@ -92,6 +94,9 @@ jobs:
           command: which aws
       - run:
           name: ls ~(debug)
+          command: ls ~
+      - run:
+          name: ls ~(debug)2
           command: ls ~/repo/
       - run:
           name: docker build
