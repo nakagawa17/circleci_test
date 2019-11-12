@@ -78,6 +78,9 @@ jobs:
           name: confirm pip
           command: which pip3
       - run:
+          name: install aws
+          command: pip3 install awscli --upgrade --user
+      - run:
           name: docker build
           command: |
             $(aws ecr get-login --no-include-email --region ap-northeast-1)
