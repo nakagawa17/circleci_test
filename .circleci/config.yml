@@ -92,10 +92,11 @@ jobs:
           command: which aws
       - run:
           name: ls ~(debug)
-          command: ls ~
+          command: ls ~/repo
       - run:
           name: docker build
           command: |
+            cd ~/repo
             $(aws ecr get-login --no-include-email --region ap-northeast-1)
             docker build -t test-app .
             docker tag test-app:latest 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1 .
