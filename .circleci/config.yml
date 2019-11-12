@@ -56,6 +56,7 @@ jobs:
             - infrastructure/
             - locust
             - env
+            - Dockerfile
   deploy:
     working_directory: ~/repo
     docker:
