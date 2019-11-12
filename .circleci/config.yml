@@ -92,7 +92,7 @@ jobs:
           command: which aws
       - run:
           name: ls ~(debug)
-          command: ls ~/repo
+          command: ls ~/repo/
       - run:
           name: docker build
           command: |
