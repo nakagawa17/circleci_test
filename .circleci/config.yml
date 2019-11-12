@@ -50,6 +50,9 @@ jobs:
       - run:
           name: run e2e test
           command: cd ~/repo/test && ENV_FILE=~/repo/.env bundle exec rspec
+      - run:
+          name: ls ~(debug)
+          command: ls ~
       - persist_to_workspace:
           root: ~/repo
           paths:
@@ -85,8 +88,11 @@ jobs:
           name: bash set
           command: echo "export PATH=~/.local/bin:$PATH" >> $BASH_ENV
       - run:
-          name: confirm aws
+          name: confirm aws(debug)
           command: which aws
+      - run:
+          name: ls ~(debug)
+          command: ls ~
       - run:
           name: docker build
           command: |
