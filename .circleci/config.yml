@@ -81,6 +81,9 @@ jobs:
           name: install aws
           command: pip3 install awscli --upgrade --user
       - run:
+          name: confirm aws
+          command: aws --version
+      - run:
           name: docker build
           command: |
             $(aws ecr get-login --no-include-email --region ap-northeast-1)
@@ -118,14 +121,14 @@ workflows:
   version: 2
   run_all:
     jobs:
-      - go-build
-      - ruby-e2e:
-          requires:
-            - go-build
+#      - go-build
+#      - ruby-e2e:
+#          requires:
+#            - go-build
       - deploy:
-          requires:
-            - go-build
-            - ruby-e2e
+#          requires:
+#            - go-build
+#            - ruby-e2e
 #          filters:
 #            branches:
 #              only: develop
