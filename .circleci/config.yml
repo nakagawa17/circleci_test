@@ -82,7 +82,7 @@ jobs:
           command: pip3 install awscli --upgrade --user
       - run:
           name: confirm aws
-          command: aws --version
+          command: ls /usr/local/bin
       - run:
           name: docker build
           command: |
