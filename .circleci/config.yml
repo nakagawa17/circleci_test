@@ -74,9 +74,9 @@ jobs:
       - run:
           name: confirm python
           command: which python
-       - run:
-       name: confirm pip
-       command: which pip3
+     - run:
+          name: confirm pip
+          command: which pip3
       - run:
           name: docker build
           command: |
