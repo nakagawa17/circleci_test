@@ -72,6 +72,12 @@ jobs:
             echo "export AWS_ACCESS_KEY_ID=${STAGING_AWS_ACCESS_KEY_ID}" >> $BASH_ENV
             echo "export AWS_SECRET_ACCESS_KEY=${STAGING_AWS_SECRET_ACCESS_KEY}" >> $BASH_ENV
       - run:
+          name: confirm python
+          command: which python
+       - run:
+       name: confirm pip
+       command: which pip3
+      - run:
           name: docker build
           command: |
             $(aws ecr get-login --no-include-email --region ap-northeast-1)
