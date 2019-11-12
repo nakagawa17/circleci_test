@@ -125,7 +125,8 @@ workflows:
 #      - ruby-e2e:
 #          requires:
 #            - go-build
-      - deploy:
+#      - deploy:
+      - deploy
 #          requires:
 #            - go-build
 #            - ruby-e2e
