@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"net/http"
+)
 
 type AnimalInterface interface {
 	bark()
@@ -42,4 +46,5 @@ func main() {
 	}
 	GetOnlyDog(boxes)
 	fmt.Println("OK!")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

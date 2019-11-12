@@ -78,33 +78,32 @@ jobs:
             docker build -t test-app .
             docker tag test-app:latest 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1 .
             docker push 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
-
-      - run:
-          name: ecs deploy
-          command: ecs-deploy -n test-service -c test -t 240 -i 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
-          no_output_timeout: 20m
-
-      - run:
-          name: Install rsync
-          command: sudo apt install -y rsync
-      - run:
-          name: Install Ansible
-          command: sudo pip install ansible
-      - add_ssh_keys:
-          fingerprints:
-            - "42:f2:8d:b3:01:8c:e0:6b:05:93:91:d9:91:be:d3:b1"
-            # ssh_key name is id_rsa_[finger_print_name] you can see finger_print_name in circle ci web page
-      - run:
-          name: Start ssh-agent for registering ssh-key
-          command: |
-            ssh-agent -s > ~/.ssh_agent_conf
-            source ~/.ssh_agent_conf
-            for _k in $(ls ${HOME}/.ssh/id_*); do
-              ssh-add ${_k} || true
-            done
-      - run:
-          name: Deploy with Ansible
-          command: cd ~/repo/infrastructure/ansible && ansible-playbook -i locust.ini site.yml
+#      - run:
+#          name: ecs deploy
+#          command: ecs-deploy -n test-service -c test -t 240 -i 356315504566.dkr.ecr.ap-northeast-1.amazonaws.com/test-app:$CIRCLE_SHA1
+#          no_output_timeout: 20m
+#
+#      - run:
+#          name: Install rsync
+#          command: sudo apt install -y rsync
+#      - run:
+#          name: Install Ansible
+#          command: sudo pip install ansible
+#      - add_ssh_keys:
+#          fingerprints:
+#            - "42:f2:8d:b3:01:8c:e0:6b:05:93:91:d9:91:be:d3:b1"
+#            # ssh_key name is id_rsa_[finger_print_name] you can see finger_print_name in circle ci web page
+#      - run:
+#          name: Start ssh-agent for registering ssh-key
+#          command: |
+#            ssh-agent -s > ~/.ssh_agent_conf
+#            source ~/.ssh_agent_conf
+#            for _k in $(ls ${HOME}/.ssh/id_*); do
+#              ssh-add ${_k} || true
+#            done
+#      - run:
+#          name: Deploy with Ansible
+#          command: cd ~/repo/infrastructure/ansible && ansible-playbook -i locust.ini site.yml
 
 workflows:
   version: 2
@@ -118,6 +117,6 @@ workflows:
           requires:
             - go-build
             - ruby-e2e
-          filters:
-            branches:
-              only: develop
+#          filters:
+#            branches:
+#              only: develop
